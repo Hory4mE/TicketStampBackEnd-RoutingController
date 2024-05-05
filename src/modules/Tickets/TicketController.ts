@@ -12,7 +12,11 @@ import {
 import { TicketServices } from "./TicketServices";
 
 @Controller()
-export class UserController {
+export class TicketController {
+  @Get("/")
+  response() {
+    return { msg: "Welcome" };
+  }
   @Get("/tickets")
   getAll() {
     const services = new TicketServices();
@@ -33,14 +37,14 @@ export class UserController {
   }
 
   @Put("/ticket/:id")
-  async put(@Param("id") id: number, @Body() user: any) {
+  async put(@Param("id") id: string, @Body() user: any) {
     const services = new TicketServices();
     await services.put(id, user);
     return {msg : "successfully update"}
   }
 
   @Delete("/ticket/:id")
-  async remove(@Param("id") id: number) {
+  async remove(@Param("id") id: string) {
     const services = new TicketServices();
     await services.delete(id);
     return { msg : "successfully delete"}

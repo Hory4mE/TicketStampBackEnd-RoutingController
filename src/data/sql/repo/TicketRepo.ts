@@ -6,8 +6,8 @@ export interface ITicketRepo {
   getAll(): Promise<ITicket[]>;
   findTicketById(id: string): Promise<ITicket>;
   post(user: ITicket): Promise<void>;
-  put(id: number, user: Partial<ITicket>): Promise<void>;
-  delete(id: number): Promise<void>;
+  put(id: string, user: Partial<ITicket>): Promise<void>;
+  delete(id: string): Promise<void>;
 }
 
 export class TicketRepo implements ITicketRepo {
@@ -16,19 +16,22 @@ export class TicketRepo implements ITicketRepo {
     this.callKnex = knex(config);
   }
   async getAll(): Promise<ITicket[]> {
-    return this.callKnex.select("*");
+    return this.callKnex.select("*").from("tickets");
   }
   async findTicketById(id: string): Promise<ITicket> {
-    return this.callKnex.first();
+    return this.callKnex("tickets")
+      .select()
+      .where("ticket_id", id)
+      .first();
   }
   async post(user: ITicket): Promise<void> {
-    return this.callKnex.insert([user]);
+    return this.callKnex("tickets").insert([user]);
   }
-  async put(id: number, user: Partial<ITicket>): Promise<void> {
-    return this.callKnex.update([user]);
+  async put(id: string, user: Partial<ITicket>): Promise<void> {
+    return this.callKnex("tickets").where("ticket_id", id).update(user);
   }
-  async delete(id: number): Promise<void> {
-    this.callKnex.update({
+  async delete(id: string): Promise<void> {
+    await this.callKnex("tickets").where("ticket_id", id).update({
       isDelete: true,
     });
   }

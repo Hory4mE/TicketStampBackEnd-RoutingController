@@ -1,5 +1,5 @@
 import { ITicket } from "@app/data/abstraction/entities/ITicket";
-import { TicketRepo } from "@app/data/sql/repo/TicketRepo";
+import { TicketRepo } from "../../data/sql/repo/TicketRepo";
 
 export class TicketServices {
   repo;
@@ -15,12 +15,12 @@ export class TicketServices {
   }
 
   public async createTicket(ticket: any): Promise<void> {
-    return this.repo.post(ticket);
+    return await this.repo.post(ticket);
   }
-  public async put(id: number, user: any): Promise<void> {
-    this.repo.put(id, user);
+  public async put(id: string, user: any): Promise<void> {
+    return await this.repo.put(id, user);
   }
-  public async delete(id: number): Promise<void> {
-    this.repo.delete(id);
+  public async delete(id: string): Promise<void> {
+    return await this.repo.delete(id);
   }
 }

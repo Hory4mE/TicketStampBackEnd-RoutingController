@@ -5,10 +5,11 @@ export async function up(knex: Knex): Promise<void> {
     return knex.schema.createTableIfNotExists("tickets", (table) => {
         table.increments("ticket_id").primary();
         table.string("title").notNullable();
-        table.integer("description").notNullable();
-        table.string("created_date").notNullable();
-        table.string("updated_date").notNullable();
-        table.boolean("isDelete").notNullable();
+        table.text("description").notNullable();
+        table.string("status").notNullable();
+        table.timestamp("created_date").notNullable();
+        table.timestamp("updated_date").notNullable();
+        table.boolean("isDelete").notNullable().defaultTo(false);
     })
 }
 
