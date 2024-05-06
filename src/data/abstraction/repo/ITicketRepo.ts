@@ -1,9 +1,9 @@
 import { ITicket } from "../entities/ITicket";
 
 export interface ITicketRepo {
-  getAll(): Promise<ITicket>;
-  findTicket(): Promise<ITicket>;
-  post(): Promise<void>;
-  put(id: number, user: Partial<ITicket>): Promise<void>;
-  delete(id: number): Promise<void>;
+  fetchAllTickets(): Promise<ITicket[]>;
+  findTicketById(id: string): Promise<ITicket>;
+  createTicket(user: ITicket): Promise<void>;
+  updateStatusById(id: string, user: Partial<ITicket>): Promise<void>;
+  deleteTicket(id: string): Promise<void>;
 }

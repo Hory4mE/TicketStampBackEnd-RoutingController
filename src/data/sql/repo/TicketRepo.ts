@@ -1,36 +1,40 @@
 import { ITicket } from "@app/data/abstraction/entities/ITicket";
-import config from "../../../../knexfile";
+import { ITicketRepo } from "@app/data/abstraction/repo/ITicketRepo";
+import { TicketStatus } from "@app/modules/Tickets/models/Definitions";
+import config from "@knex/knexfile";
 import { Knex, knex } from "knex";
-
-export interface ITicketRepo {
-  getAll(): Promise<ITicket[]>;
-  findTicketById(id: string): Promise<ITicket>;
-  post(user: ITicket): Promise<void>;
-  put(id: string, user: Partial<ITicket>): Promise<void>;
-  delete(id: string): Promise<void>;
-}
 
 export class TicketRepo implements ITicketRepo {
   callKnex: Knex<ITicket>;
   constructor() {
     this.callKnex = knex(config);
   }
-  async getAll(): Promise<ITicket[]> {
+  async fetchAllTickets(): Promise<ITicket[]> {
     return this.callKnex.select("*").from("tickets");
   }
   async findTicketById(id: string): Promise<ITicket> {
-    return this.callKnex("tickets")
-      .select()
-      .where("ticket_id", id)
-      .first();
+    return this.callKnex("tickets").where("ticket_id", id).first();
   }
-  async post(user: ITicket): Promise<void> {
+  async createTicket(user: ITicket): Promise<void> {
     return this.callKnex("tickets").insert([user]);
   }
-  async put(id: string, user: Partial<ITicket>): Promise<void> {
-    return this.callKnex("tickets").where("ticket_id", id).update(user);
+
+  async checkStatusById(id: string): Promise<TicketStatus> {
+    return await this.callKnex("tickets")
+      .where("ticket_id", id)
+      .select<TicketStatus>("status")
+      .first();
   }
-  async delete(id: string): Promise<void> {
+  async updateStatusById(id: string, user: Partial<ITicket>): Promise<void> {
+    const userUpdateTimeStamp: Partial<ITicket> = {
+      ...user,
+      updated_date: new Date(),
+    };
+    return this.callKnex("tickets")
+      .where("ticket_id", id)
+      .update(userUpdateTimeStamp);
+  }
+  async deleteTicket(id: string): Promise<void> {
     await this.callKnex("tickets").where("ticket_id", id).update({
       isDelete: true,
     });

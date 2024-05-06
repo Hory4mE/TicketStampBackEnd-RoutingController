@@ -4,7 +4,7 @@ import { ITicket } from "@app/data/abstraction/entities/ITicket";
 
 export async function seed(knex: Knex): Promise<void> {
     // Deletes ALL existing entries
-    await knex("tickets").del();
+    // await knex("tickets").del();
 
     // Generate randomized data
     const titles = ["Title 1", "Title 2", "Title 3"];
@@ -14,13 +14,13 @@ export async function seed(knex: Knex): Promise<void> {
     const status = [
         TicketStatus.PENDING,
         TicketStatus.IN_PROGRESS,
-        TicketStatus.APPROVE
+        TicketStatus.PENDING
     ];
 
     const data: Partial<ITicket>[] = titles.map((title, index) => ({
         title,
         description: descriptions[index],
-        status: status[index], // Using the TicketStatus enum here
+        status: TicketStatus.PENDING, // Using the TicketStatus enum here
         created_date: createdDates[index],
         updated_date: updatedDates[index],
     }));

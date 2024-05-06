@@ -19,6 +19,6 @@ const config = {
     },
     migrations: { directory: "./migrations/" },
 };
-// module.exports = module.exports.development = module.exports.staging = module.exports.production = config;
+module.exports = module.exports.development = module.exports.staging = module.exports.production = config;
 
 export default config;
