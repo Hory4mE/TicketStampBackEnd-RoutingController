@@ -7,5 +7,5 @@ export interface ITicket {
   status: TicketStatus;
   created_date: Date;
   updated_date: Date;
-  isDelete: boolean;
+  is_delete: boolean;
 }

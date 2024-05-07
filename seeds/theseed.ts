@@ -4,7 +4,7 @@ import { ITicket } from "@app/data/abstraction/entities/ITicket";
 
 export async function seed(knex: Knex): Promise<void> {
     // Deletes ALL existing entries
-    // await knex("tickets").del();
+    await knex("tickets").del();
 
     // Generate randomized data
     const titles = ["Title 1", "Title 2", "Title 3"];

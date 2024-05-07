@@ -16,7 +16,11 @@ export class TicketRepo implements ITicketRepo {
     return this.callKnex("tickets").where("ticket_id", id).first();
   }
   async createTicket(user: ITicket): Promise<void> {
-    return this.callKnex("tickets").insert([user]);
+    user.status = TicketStatus.PENDING;
+    user.created_date = new Date();
+    user.updated_date = new Date();
+    user.is_delete = false;
+    return this.callKnex("tickets").insert(user);
   }
 
   async checkStatusById(id: string): Promise<TicketStatus> {
@@ -36,7 +40,7 @@ export class TicketRepo implements ITicketRepo {
   }
   async deleteTicket(id: string): Promise<void> {
     await this.callKnex("tickets").where("ticket_id", id).update({
-      isDelete: true,
+      is_delete: true,
     });
   }
 }

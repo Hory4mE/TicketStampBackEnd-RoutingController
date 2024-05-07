@@ -2,7 +2,6 @@ import { ITicket } from "@app/data/abstraction/entities/ITicket";
 import { TicketRepo } from "../../data/sql/repo/TicketRepo";
 import { Container, Service } from "typedi";
 import { HttpError } from "routing-controllers";
-import { error } from "console";
 import { TicketStatus } from "./models/Definitions";
 
 @Service()
@@ -12,7 +11,12 @@ export class TicketServices {
     this.repo = new TicketRepo();
   }
   public async fetchAllTickets(): Promise<ITicket[]> {
-    return this.repo.fetchAllTickets();
+    const tickets = await this.repo.fetchAllTickets();
+    if (tickets) {
+      return tickets;
+    }else{
+      throw new HttpError(404, "Ticket Not Found");
+    }
   }
 
   public async findTicketById(id: string): Promise<ITicket> {
@@ -25,7 +29,8 @@ export class TicketServices {
   }
 
   public async createTicket(ticket: ITicket): Promise<void> {
-    await this.repo.createTicket(ticket);
+    const creation = await this.repo.createTicket(ticket);
+    return creation;
   }
 
   public async updateStatusById(
