@@ -12,9 +12,9 @@ export class TicketServices {
   }
   public async fetchAllTickets(): Promise<ITicket[]> {
     const tickets = await this.repo.fetchAllTickets();
-    if (tickets) {
+    if (tickets && tickets.length > 0) {
       return tickets;
-    }else{
+    } else {
       throw new HttpError(404, "Ticket Not Found");
     }
   }
@@ -28,7 +28,9 @@ export class TicketServices {
     }
   }
 
-  public async createTicket(ticket: ITicket): Promise<void> {
+  public async createTicket(
+    ticket: Pick<ITicket, "title" | "description">
+  ): Promise<void> {
     const creation = await this.repo.createTicket(ticket);
     return creation;
   }
@@ -56,16 +58,8 @@ export class TicketServices {
         400,
         "Ticket status cannot be changed from 'In Progress' to 'Pending'"
       );
-    } else if (
-      ticket.status === TicketStatus.COMPLETED ||
-      ticket.status === TicketStatus.CANCELLED
-    ) {
-      throw new HttpError(
-        400,
-        "Ticket status is 'Completed' or 'Cancelled'. It cannot be changed."
-      );
-    } else {
-      await this.repo.updateStatusById(id, user);
+    } else if (ticket.status === TicketStatus.COMPLETED || ticket.status === TicketStatus.CANCELLED) {
+      throw new HttpError(400,"Ticket status is 'Completed' or 'Cancelled'. It cannot be changed.");
     }
   }
 

@@ -1,0 +1,4 @@
+{
+  "check-coverage": true,
+  "exclude": ["migrations", "seeds/*","knexfile.ts","unitconfig.ts"]
+}

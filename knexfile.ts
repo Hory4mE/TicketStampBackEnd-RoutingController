@@ -1,9 +1,10 @@
 // Update with your config settings.
 import * as DotEnv from "dotenv";
+import { Knex } from "knex";
 
 DotEnv.config();
 
-const config = {
+const config:Knex.Config = {
     client: process.env.DATABASE__DRIVER,
     connection: {
         host: process.env.DATABASE__HOST,
@@ -22,3 +23,12 @@ const config = {
 module.exports = module.exports.development = module.exports.staging = module.exports.production = config;
 
 export default config;
+
+// const config = {
+//     client: "sqlite3",
+//     connection: {
+//       filename: ":memory:",
+//     },
+//     migrations: { directory: "./migrations" },
+//   };
+//   export default config;
