@@ -24,7 +24,8 @@
     "typeRoots": ["./typings", "./node_modules", "./node_modules/@types"],
     "paths": {
       "@app/*": ["./src/*"],
-      "@test/*": ["./test/*"]
+      "@test/*": ["./test/*"],
+      "@knex/knexfile": ["./knexfile.ts"] 
     }
   }
 }

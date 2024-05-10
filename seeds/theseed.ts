@@ -14,13 +14,13 @@ export async function seed(knex: Knex): Promise<void> {
     const status = [
         TicketStatus.PENDING,
         TicketStatus.IN_PROGRESS,
-        TicketStatus.APPROVE
+        TicketStatus.PENDING
     ];
 
     const data: Partial<ITicket>[] = titles.map((title, index) => ({
         title,
         description: descriptions[index],
-        status: status[index], // Using the TicketStatus enum here
+        status: TicketStatus.PENDING, // Using the TicketStatus enum here
         created_date: createdDates[index],
         updated_date: updatedDates[index],
     }));

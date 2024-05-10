@@ -1,0 +1,11 @@
+{
+    "spec": "test/*.spec.ts",
+    "node-option": [
+      "experimental-specifier-resolution=node",
+      "loader=ts-node/esm"
+    ],
+    "require": ["ts-node/register", "tsconfig-paths/register"],
+    "extensions": ["ts"],
+    "reporter": "spec",
+    "watch-files": ["test/*.*.ts", "test/unit/**/*.*.ts", "test/unit/**/**/*.*.ts"]
+  }

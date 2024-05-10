@@ -7,46 +7,92 @@ import {
   Post,
   Put,
   Delete,
+  JsonController,
+  HttpError,
 } from "routing-controllers";
 
 import { TicketServices } from "./TicketServices";
+import { Container } from "typedi";
+import { ITicket } from "@app/data/abstraction/entities/ITicket";
+import _ from "lodash";
 
 @Controller()
 export class TicketController {
+  serviceInstance = Container.get(TicketServices);
+
   @Get("/")
-  response() {
-    return { msg: "Welcome" };
+  async welcomeMessage() {
+    return "Welcome";
   }
+
   @Get("/tickets")
-  getAll() {
-    const services = new TicketServices();
-    return services.getAll();
+  async fetchAllTickets() {
+    try {
+      const services = await this.serviceInstance.fetchAllTickets();
+      return services;
+    } catch (error) {
+      if (error instanceof HttpError) {
+        throw new HttpError(error.httpCode, error.message);
+      } else {
+        throw new HttpError(500, "Internal Server Error");
+      }
+    }
   }
 
-  @Get("/ticket/:id")
-  getOne(@Param("id") id: string) {
-    const services = new TicketServices();
-    return services.findTicket(id);
+  @Get("/tickets/:id")
+  async findTicketById(@Param("id") id: string) {
+    try {
+      const services = await this.serviceInstance.findTicketById(id);
+      return services;
+    } catch (error) {
+      if (error instanceof HttpError) {
+        throw new HttpError(error.httpCode, error.message);
+      } else {
+        throw new HttpError(500, "Internal Server Error");
+      }
+    }
   }
 
-  @Post("/ticket")
-  async post(@Body() user: any) {
-    const services = new TicketServices();
-    await services.createTicket(user);
-    return { msg: "successfully crates" };
+  @Post("/tickets")
+  async createTicket(@Body() user: ITicket) {
+    try {
+      await this.serviceInstance.createTicket(user);
+      return { msg: "successfully crates" };
+    } catch (error) {
+      if (error instanceof HttpError) {
+        throw new HttpError(error.httpCode, error.message);
+      } else {
+        // throw new HttpError(500, "Internal Server Error");
+      }
+    }
   }
 
-  @Put("/ticket/:id")
-  async put(@Param("id") id: string, @Body() user: any) {
-    const services = new TicketServices();
-    await services.put(id, user);
-    return {msg : "successfully update"}
+  @Put("/tickets/:id")
+  async updateTicketStatus(@Param("id") id: string, @Body() user: Partial<ITicket>) {
+    try {
+      const pickedTicket = _.pickBy(user, (row) => !!row);
+      await this.serviceInstance.updateStatusById(id, pickedTicket);
+      return { msg: "successfully update" };
+    } catch (error) {
+      if (error instanceof HttpError) {
+        throw new HttpError(error.httpCode, error.message);
+      } else {
+        throw new HttpError(500, "Internal Server Error");
+      }
+    }
   }
 
-  @Delete("/ticket/:id")
-  async remove(@Param("id") id: string) {
-    const services = new TicketServices();
-    await services.delete(id);
-    return { msg : "successfully delete"}
+  @Delete("/tickets/:id")
+  async removeTicket(@Param("id") id: string) {
+    try {
+      await this.serviceInstance.deleteTicket(id);
+      return { msg: "successfully delete" };
+    } catch (error) {
+      if (error instanceof HttpError) {
+        throw new HttpError(error.httpCode, error.message);
+      } else {
+        throw new HttpError(500, "Internal Server Error");
+      }
+    }
   }
 }
