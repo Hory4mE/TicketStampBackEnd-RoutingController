@@ -62,7 +62,7 @@ export class TicketController {
       if (error instanceof HttpError) {
         throw new HttpError(error.httpCode, error.message);
       } else {
-        // throw new HttpError(500, "Internal Server Error");
+        throw new HttpError(500, "Internal Server Error");
       }
     }
   }
