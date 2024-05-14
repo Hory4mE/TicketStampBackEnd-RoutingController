@@ -12,11 +12,14 @@
     "class-validator": "^0.14.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "express-validation": "^4.1.0",
+    "express-validator": "^7.0.1",
     "knex": "^3.1.0",
     "koa": "^2.15.3",
     "koa-bodyparser": "^4.4.1",
     "lodash": "^4.17.21",
     "mysql2": "^3.9.7",
+    "nodemon": "^3.1.0",
     "nyc": "^15.1.0",
     "readline": "^1.3.0",
     "reflect-metadata": "^0.2.2",
@@ -28,9 +31,9 @@
   },
   "scripts": {
     "start:selectPort": "ts-node ./src/startDynamicPort.ts",
-    "start": "ts-node -r tsconfig-paths/register ./src/app.ts",
+    "start": "nodemon -r tsconfig-paths/register ./src/app.ts",
     "test-mocha": "nyc mocha",
-    "build":"tsc"
+    "build": "tsc"
   },
   "devDependencies": {
     "@types/expect": "^24.3.0",

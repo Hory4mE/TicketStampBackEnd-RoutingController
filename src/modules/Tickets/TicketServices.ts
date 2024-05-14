@@ -1,7 +1,7 @@
 import { ITicket } from "@app/data/abstraction/entities/ITicket";
+import { ForbiddenError, NotFoundError } from "@app/data/abstraction/errors/";
+import { Service } from "typedi";
 import { TicketRepo } from "../../data/sql/repo/TicketRepo";
-import { Container, Service } from "typedi";
-import { HttpError } from "routing-controllers";
 import { TicketStatus } from "./models/Definitions";
 
 @Service()
@@ -15,7 +15,7 @@ export class TicketServices {
     if (tickets && tickets.length > 0) {
       return tickets;
     } else {
-      throw new HttpError(404, "Ticket Not Found");
+      throw new NotFoundError("Ticket Not Found")
     }
   }
 
@@ -24,15 +24,14 @@ export class TicketServices {
     if (ticket) {
       return ticket;
     } else {
-      throw new HttpError(404, "Ticket Not Found");
+      throw new NotFoundError("Ticket Not Found");
     }
   }
 
   public async createTicket(
     ticket: Pick<ITicket, "title" | "description">
   ): Promise<void> {
-    const creation = await this.repo.createTicket(ticket);
-    return creation;
+    await this.repo.createTicket(ticket);
   }
 
   public async updateTicketById(
@@ -41,7 +40,7 @@ export class TicketServices {
   ): Promise<void> {
     const ticket = await this.repo.findTicketById(id);
     if (!ticket) {
-      throw new HttpError(404, "Ticket not Found");
+      throw new NotFoundError("Ticket Not Found");
     }
     await this.repo.updateTicketById(id, user);
   }
@@ -52,7 +51,7 @@ export class TicketServices {
   ): Promise<void> {
     const ticket = await this.repo.findTicketById(id);
     if (!ticket) {
-      throw new HttpError(404, "Ticket not Found");
+      throw new NotFoundError("Ticket Not Found");
     }
 
     if (user.status) { // Check if user provides a status
@@ -68,13 +67,10 @@ export class TicketServices {
       ) {
         await this.repo.updateStatusById(id, user);
       } else {
-        throw new HttpError(
-          403,
-          "Invalid status transition or ticket status cannot be changed"
-        );
+        throw new ForbiddenError("Invalid status transition or ticket status cannot be changed")
       }
     } else {
-      throw new HttpError(404, "No status provided for update");
+      throw new NotFoundError("No Status provided for updates...");
     }
   }
 
@@ -82,11 +78,11 @@ export class TicketServices {
   public async deleteTicket(id: string): Promise<void> {
     const ticket = await this.repo.findTicketById(id);
     if (!ticket) {
-      throw new HttpError(404, "Ticket not Found");
+      throw new NotFoundError("Ticket Not Found");
     }
     if (ticket.status === TicketStatus.COMPLETED ||
       ticket.status === TicketStatus.CANCELLED) {
-      throw new HttpError(403, "Cannot Delete Completed or Cancelled Ticket")
+      throw new ForbiddenError("Cannot Delete Completed or Cancelled Ticket")
     } else {
       return await this.repo.deleteTicket(id);
     }

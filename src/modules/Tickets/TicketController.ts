@@ -1,20 +1,18 @@
 import "reflect-metadata";
 import {
-  Controller,
-  Param,
   Body,
-  Get,
-  Post,
-  Put,
+  Controller,
   Delete,
-  JsonController,
-  HttpError,
+  Get,
+  Param,
+  Post,
+  Put
 } from "routing-controllers";
 
-import { TicketServices } from "./TicketServices";
-import { Container } from "typedi";
-import { ITicket } from "@app/data/abstraction/entities/ITicket";
+import { ApplicationError, BadRequestError, CustomHttpError, InternalServerError, NotFoundError } from "@app/data/abstraction/errors";
 import _ from "lodash";
+import { Container } from "typedi";
+import { TicketServices } from "./TicketServices";
 import { CreateTicketStatusRequest, UpdateTicketStatusRequest, bodyUpdateRequest } from "./dto/TicketRequest";
 
 @Controller()
@@ -32,10 +30,10 @@ export class TicketController {
       const services = await this.serviceInstance.fetchAllTickets();
       return services;
     } catch (error) {
-      if (error instanceof HttpError) {
-        throw new HttpError(error.httpCode, error.message);
-      } else {
-        throw new HttpError(500, "Internal Server Error");
+      if (error instanceof ApplicationError) throw error;
+      else if (error instanceof CustomHttpError) throw error;
+      else {
+        throw new InternalServerError;
       }
     }
   }
@@ -46,10 +44,12 @@ export class TicketController {
       const services = await this.serviceInstance.findTicketById(id);
       return services;
     } catch (error) {
-      if (error instanceof HttpError) {
-        throw new HttpError(error.httpCode, error.message);
+      if (error instanceof NotFoundError) {
+        throw new BadRequestError(error.message);
+      } else if (error instanceof CustomHttpError) {
+        throw error;
       } else {
-        throw new HttpError(500, "Internal Server Error");
+        throw new InternalServerError;
       }
     }
   }
@@ -60,10 +60,11 @@ export class TicketController {
       await this.serviceInstance.createTicket(user);
       return { msg: "successfully crates" };
     } catch (error) {
-      if (error instanceof HttpError) {
-        throw new HttpError(error.httpCode, error.message);
+      if (error instanceof ApplicationError) throw error;
+      if (error instanceof CustomHttpError) {
+        throw error;
       } else {
-        throw new HttpError(500, "Internal Server Error");
+        throw new InternalServerError;
       }
     }
   }
@@ -75,11 +76,13 @@ export class TicketController {
       await this.serviceInstance.updateStatusById(id, pickedTicket);
       return { msg: "successfully update Status" };
     } catch (error) {
-      console.error(error.message + " AKSDKASKD");
-      if (error instanceof HttpError) {
-        throw new HttpError(error.httpCode, error.message);
+      if (error instanceof ApplicationError) {
+        throw error;
+      }
+      else if (error instanceof CustomHttpError) {
+        throw error;
       } else {
-        throw new HttpError(500, "Internal Server Error");
+        throw new InternalServerError;
       }
     }
   }
@@ -91,10 +94,13 @@ export class TicketController {
       await this.serviceInstance.updateTicketById(id, pickedTicket);
       return { msg: "successfully update Data" };
     } catch (error) {
-      if (error instanceof HttpError) {
-        throw new HttpError(error.httpCode, error.message);
+      if (error instanceof ApplicationError) {
+        throw error;
+      }
+      else if (error instanceof CustomHttpError) {
+        throw error;
       } else {
-        throw new HttpError(500, "Internal Server Error");
+        throw new InternalServerError;
       }
     }
   }
@@ -105,10 +111,12 @@ export class TicketController {
       await this.serviceInstance.deleteTicket(id);
       return { msg: "successfully delete" };
     } catch (error) {
-      if (error instanceof HttpError) {
-        throw new HttpError(error.httpCode, error.message);
+      if (error instanceof ApplicationError) {
+        throw error;
+      } else if (error instanceof CustomHttpError) {
+        throw error;
       } else {
-        throw new HttpError(500, "Internal Server Error");
+        throw new InternalServerError;
       }
     }
   }
