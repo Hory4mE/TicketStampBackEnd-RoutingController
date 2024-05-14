@@ -11,7 +11,7 @@ const config:Knex.Config = {
         database: process.env.DATABASE__DATABASE,
         user: process.env.DATABASE__USER,
         password: process.env.DATABASE__PASSWORD,
-        port: Number.parseInt(process.env.DATABASE__PORT || "3306"),
+        port: Number.parseInt(process.env.DATABASE__PORT || "3308"),
     },
     pool: {
         min: parseInt(process.env.DATABASE__POOL_MIN || "1"),

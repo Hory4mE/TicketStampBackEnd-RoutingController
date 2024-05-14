@@ -21,6 +21,17 @@ export class TicketRepo implements ITicketRepo {
     user.is_delete = false;
     return this.callKnex("tickets").insert(user);
   }
+
+  async updateTicketById(id: string, user: Partial<ITicket>): Promise<void> {
+    const userUpdateTimeStamp: Partial<ITicket> = {
+      ...user,
+      updated_date: new Date(),
+    };
+    return this.callKnex("tickets")
+      .where("ticket_id", id)
+      .update(userUpdateTimeStamp);
+  }
+
   async updateStatusById(id: string, user: Partial<ITicket>): Promise<void> {
     const userUpdateTimeStamp: Partial<ITicket> = {
       ...user,

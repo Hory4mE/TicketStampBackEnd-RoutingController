@@ -15,6 +15,7 @@ import { TicketServices } from "./TicketServices";
 import { Container } from "typedi";
 import { ITicket } from "@app/data/abstraction/entities/ITicket";
 import _ from "lodash";
+import { CreateTicketStatusRequest, UpdateTicketStatusRequest, bodyUpdateRequest } from "./dto/TicketRequest";
 
 @Controller()
 export class TicketController {
@@ -54,7 +55,7 @@ export class TicketController {
   }
 
   @Post("/tickets")
-  async createTicket(@Body() user: ITicket) {
+  async createTicket(@Body() user: CreateTicketStatusRequest) {
     try {
       await this.serviceInstance.createTicket(user);
       return { msg: "successfully crates" };
@@ -67,12 +68,28 @@ export class TicketController {
     }
   }
 
-  @Put("/tickets/:id")
-  async updateTicketStatus(@Param("id") id: string, @Body() user: Partial<ITicket>) {
+  @Put("/tickets/status/:id")
+  async updateTicketStatus(@Param("id") id: string, @Body() user: UpdateTicketStatusRequest) {
     try {
       const pickedTicket = _.pickBy(user, (row) => !!row);
       await this.serviceInstance.updateStatusById(id, pickedTicket);
-      return { msg: "successfully update" };
+      return { msg: "successfully update Status" };
+    } catch (error) {
+      console.error(error.message + " AKSDKASKD");
+      if (error instanceof HttpError) {
+        throw new HttpError(error.httpCode, error.message);
+      } else {
+        throw new HttpError(500, "Internal Server Error");
+      }
+    }
+  }
+
+  @Put("/tickets/:id")
+  async updateTicketData(@Param("id") id: string, @Body() user: bodyUpdateRequest) {
+    try {
+      const pickedTicket = _.pickBy(user, (row) => !!row);
+      await this.serviceInstance.updateTicketById(id, pickedTicket);
+      return { msg: "successfully update Data" };
     } catch (error) {
       if (error instanceof HttpError) {
         throw new HttpError(error.httpCode, error.message);

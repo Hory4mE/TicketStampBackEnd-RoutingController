@@ -3,6 +3,7 @@
     "@koa/cors": "^5.0.0",
     "@koa/multer": "^3.0.2",
     "@koa/router": "^12.0.1",
+    "@types/koa": "^2.15.0",
     "@types/lodash.pickby": "^4.6.9",
     "@types/node": "^20.12.8",
     "chai": "^4.1.0",
@@ -26,9 +27,10 @@
     "typedi": "^0.10.0"
   },
   "scripts": {
-    "start": "ts-node ./src/startDynamicPort.ts",
-    "start:fixport": "ts-node -r tsconfig-paths/register ./src/app.ts",
-    "test-mocha": "nyc mocha"
+    "start:selectPort": "ts-node ./src/startDynamicPort.ts",
+    "start": "ts-node -r tsconfig-paths/register ./src/app.ts",
+    "test-mocha": "nyc mocha",
+    "build":"tsc"
   },
   "devDependencies": {
     "@types/expect": "^24.3.0",

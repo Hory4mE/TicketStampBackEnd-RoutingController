@@ -35,6 +35,17 @@ export class TicketServices {
     return creation;
   }
 
+  public async updateTicketById(
+    id: string,
+    user: Partial<ITicket>
+  ): Promise<void> {
+    const ticket = await this.repo.findTicketById(id);
+    if (!ticket) {
+      throw new HttpError(404, "Ticket not Found");
+    }
+    await this.repo.updateTicketById(id, user);
+  }
+
   public async updateStatusById(
     id: string,
     user: Partial<ITicket>
@@ -44,26 +55,40 @@ export class TicketServices {
       throw new HttpError(404, "Ticket not Found");
     }
 
-    if (
-      ticket.status === TicketStatus.PENDING &&
-      (user.status === TicketStatus.IN_PROGRESS ||
-        user.status === TicketStatus.CANCELLED)
-    ) {
-      await this.repo.updateStatusById(id, user);
-    } else if (
-      ticket.status === TicketStatus.IN_PROGRESS &&
-      user.status === TicketStatus.PENDING
-    ) {
-      throw new HttpError(
-        400,
-        "Ticket status cannot be changed from 'In Progress' to 'Pending'"
-      );
-    } else if (ticket.status === TicketStatus.COMPLETED || ticket.status === TicketStatus.CANCELLED) {
-      throw new HttpError(400,"Ticket status is 'Completed' or 'Cancelled'. It cannot be changed.");
+    if (user.status) { // Check if user provides a status
+      if (
+        ticket.status === TicketStatus.PENDING &&
+        (user.status === TicketStatus.IN_PROGRESS ||
+          user.status === TicketStatus.CANCELLED)
+      ) {
+        await this.repo.updateStatusById(id, user);
+      } else if (
+        ticket.status === TicketStatus.IN_PROGRESS &&
+        user.status === TicketStatus.COMPLETED
+      ) {
+        await this.repo.updateStatusById(id, user);
+      } else {
+        throw new HttpError(
+          403,
+          "Invalid status transition or ticket status cannot be changed"
+        );
+      }
+    } else {
+      throw new HttpError(404, "No status provided for update");
     }
   }
 
+
   public async deleteTicket(id: string): Promise<void> {
-    return await this.repo.deleteTicket(id);
+    const ticket = await this.repo.findTicketById(id);
+    if (!ticket) {
+      throw new HttpError(404, "Ticket not Found");
+    }
+    if (ticket.status === TicketStatus.COMPLETED ||
+      ticket.status === TicketStatus.CANCELLED) {
+      throw new HttpError(403, "Cannot Delete Completed or Cancelled Ticket")
+    } else {
+      return await this.repo.deleteTicket(id);
+    }
   }
 }

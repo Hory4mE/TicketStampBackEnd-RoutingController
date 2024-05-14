@@ -8,31 +8,31 @@ export class CreateTicketStatusRequest {
   @Expose({ name: "title" })
   @IsNotEmpty()
   @IsString()
-  title: string;
+  readonly title: string;
 
   @Expose({ name: "description" })
   @IsOptional()
   @IsString()
-  description: string;
+  readonly description: string;
 }
 export class UpdateTicketStatusRequest {
   @Expose({ name: "status" })
   @IsOptional()
   @IsEnum(TicketStatus)
-  status: TicketStatus;
+  readonly status: TicketStatus;
 }
 
 export class bodyUpdateRequest {
   @NotAllow()
-  status: TicketStatus;
+  readonly status: TicketStatus;
 
   @Expose({ name: "title" })
   @IsNotEmpty()
   @IsString()
-  title: string;
+  readonly title: string;
 
   @Expose({ name: "description" })
   @IsOptional()
   @IsString()
-  description: string;
+  readonly description: string;
 }
